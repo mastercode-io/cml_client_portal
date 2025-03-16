@@ -18,7 +18,6 @@ const CreditSearchForm = () => {
   // State for address options
   const [addressOptions, setAddressOptions] = useState([{ value: '', label: 'Enter postal code first' }]);
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
-  const [showAddressField, setShowAddressField] = useState(true);
 
   // Title options
   const titleOptions = [
@@ -80,6 +79,7 @@ const CreditSearchForm = () => {
   // Function to fetch addresses by postal code
   const fetchAddressesByPostalCode = async (postalCode) => {
     if (!postalCode || postalCode.length < 3) {
+      setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
       return;
     }
     
@@ -145,7 +145,6 @@ const CreditSearchForm = () => {
                 fetchAddressesByPostalCode(values.postalCode);
               } else {
                 setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
-                setFieldValue('addressLine', '');
               }
             }, [values.postalCode, setFieldValue]);
             
@@ -245,13 +244,16 @@ const CreditSearchForm = () => {
                         errors={errors}
                         touched={touched}
                         onBlur={(e) => {
-                          // Convert to uppercase and trim
-                          const postalCode = e.target.value.trim().toUpperCase();
-                          setFieldValue('postalCode', postalCode);
-                          
-                          // Only fetch addresses if postal code has enough characters
+                          // First let Formik handle the blur event
+                          const postalCode = e.target.value.trim();
                           if (postalCode && postalCode.length >= 3) {
-                            fetchAddressesByPostalCode(postalCode);
+                            // Only fetch addresses if postal code is valid format
+                            const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
+                            if (ukPostcodeRegex.test(postalCode)) {
+                              fetchAddressesByPostalCode(postalCode);
+                            } else {
+                              setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
+                            }
                           }
                         }}
                       />
@@ -269,7 +271,7 @@ const CreditSearchForm = () => {
                       required
                       errors={errors}
                       touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter postal code and tab out to see available addresses"}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter a valid UK postal code and tab out to see available addresses"}
                     />
                   </div>
 
