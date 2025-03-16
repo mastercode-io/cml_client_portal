@@ -18,6 +18,7 @@ const CreditSearchForm = () => {
   // State for address options
   const [addressOptions, setAddressOptions] = useState([{ value: '', label: 'Enter postal code first' }]);
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
+  const [showAddressField, setShowAddressField] = useState(true);
 
   // Title options
   const titleOptions = [
@@ -79,7 +80,6 @@ const CreditSearchForm = () => {
   // Function to fetch addresses by postal code
   const fetchAddressesByPostalCode = async (postalCode) => {
     if (!postalCode || postalCode.length < 3) {
-      setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
       return;
     }
     
@@ -96,36 +96,6 @@ const CreditSearchForm = () => {
     } finally {
       setIsLoadingAddresses(false);
     }
-  };
-
-  // Function to format mobile number as user types
-  const formatMobileNumber = (value) => {
-    if (!value) return value;
-    
-    // Remove all non-digit characters
-    const phoneNumber = value.replace(/[^\d]/g, '');
-    
-    // Format based on length
-    if (phoneNumber.length < 5) {
-      return phoneNumber;
-    } else if (phoneNumber.length < 8) {
-      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4)}`;
-    } else if (phoneNumber.length <= 10) {
-      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
-    } else {
-      // Limit to 11 digits max
-      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 11)}`.trim();
-    }
-  };
-  
-  // Function to capitalize first letter of each word
-  const capitalizeWords = (value) => {
-    if (!value) return value;
-    return value
-      .trim()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
   };
 
   // Form submission handler
@@ -175,45 +145,10 @@ const CreditSearchForm = () => {
                 fetchAddressesByPostalCode(values.postalCode);
               } else {
                 setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
+                setFieldValue('addressLine', '');
               }
-            }, [values.postalCode]);
+            }, [values.postalCode, setFieldValue]);
             
-            // Format values on blur
-            const handleFieldBlur = (e, fieldName) => {
-              const { value } = e.target;
-              
-              // Apply formatting based on field name
-              switch (fieldName) {
-                case 'firstName':
-                case 'middleName':
-                case 'surname':
-                  setFieldValue(fieldName, capitalizeWords(value));
-                  break;
-                case 'email':
-                  setFieldValue(fieldName, value.trim().toLowerCase());
-                  break;
-                case 'mobile':
-                  setFieldValue(fieldName, formatMobileNumber(value));
-                  break;
-                case 'postalCode':
-                  const formattedPostalCode = value.trim().toUpperCase();
-                  setFieldValue(fieldName, formattedPostalCode);
-                  
-                  if (formattedPostalCode && formattedPostalCode.length >= 3) {
-                    // Only fetch addresses if postal code is valid format
-                    const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
-                    if (ukPostcodeRegex.test(formattedPostalCode)) {
-                      fetchAddressesByPostalCode(formattedPostalCode);
-                    } else {
-                      setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
-                    }
-                  }
-                  break;
-                default:
-                  break;
-              }
-            };
-
             return (
               <Form className="credit-search-form">
                 <div className="form-grid">
@@ -254,7 +189,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'firstName')}
                       />
                     </div>
                     <div className="form-col mobile-field">
@@ -265,7 +199,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'mobile')}
                       />
                     </div>
                   </div>
@@ -279,7 +212,6 @@ const CreditSearchForm = () => {
                         placeholder="Optional"
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'middleName')}
                       />
                     </div>
                     <div className="form-col email-field">
@@ -290,7 +222,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'email')}
                       />
                     </div>
                   </div>
@@ -304,7 +235,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'surname')}
                       />
                     </div>
                     <div className="form-col postal-code-field">
@@ -314,7 +244,16 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => handleFieldBlur(e, 'postalCode')}
+                        onBlur={(e) => {
+                          // Convert to uppercase and trim
+                          const postalCode = e.target.value.trim().toUpperCase();
+                          setFieldValue('postalCode', postalCode);
+                          
+                          // Only fetch addresses if postal code has enough characters
+                          if (postalCode && postalCode.length >= 3) {
+                            fetchAddressesByPostalCode(postalCode);
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -330,7 +269,7 @@ const CreditSearchForm = () => {
                       required
                       errors={errors}
                       touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter a valid UK postal code and tab out to see available addresses"}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter postal code and tab out to see available addresses"}
                     />
                   </div>
 
