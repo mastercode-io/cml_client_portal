@@ -117,7 +117,7 @@ const formatAddressOptions = (addressList) => {
     return [{ value: '', label: 'No addresses found' }];
   }
 
-  const options = [{ value: '', label: 'Select address' }];
+  const options = [];
 
   addressList.forEach(address => {
     let addressLine = address.buildingNumber ? address.buildingNumber : address.buildingName;

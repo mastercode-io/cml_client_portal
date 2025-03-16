@@ -98,6 +98,35 @@ const CreditSearchForm = () => {
     }
   };
 
+  // Function to format mobile number as user types
+  const formatMobileNumber = (value) => {
+    if (!value) return value;
+    
+    // Remove all non-digit characters
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    
+    // Format based on length
+    if (phoneNumber.length < 5) {
+      return phoneNumber;
+    } else if (phoneNumber.length < 8) {
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4)}`;
+    } else if (phoneNumber.length <= 10) {
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
+    } else {
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 10)} ${phoneNumber.slice(10, 13)}`;
+    }
+  };
+  
+  // Function to capitalize first letter of each word
+  const capitalizeWords = (value) => {
+    if (!value) return value;
+    return value
+      .trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   // Form submission handler
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     // Log form values to console (to be replaced with API call later)
@@ -188,6 +217,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const value = e.target.value.trim();
+                          setFieldValue('firstName', capitalizeWords(value));
+                        }}
                       />
                     </div>
                     <div className="form-col mobile-field">
@@ -198,6 +231,14 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onChange={(e) => {
+                          const formattedValue = formatMobileNumber(e.target.value);
+                          setFieldValue('mobile', formattedValue);
+                        }}
+                        onBlur={(e) => {
+                          const value = e.target.value.trim();
+                          setFieldValue('mobile', value);
+                        }}
                       />
                     </div>
                   </div>
@@ -211,6 +252,10 @@ const CreditSearchForm = () => {
                         placeholder="Optional"
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const value = e.target.value.trim();
+                          setFieldValue('middleName', capitalizeWords(value));
+                        }}
                       />
                     </div>
                     <div className="form-col email-field">
@@ -221,6 +266,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const value = e.target.value.trim().toLowerCase();
+                          setFieldValue('email', value);
+                        }}
                       />
                     </div>
                   </div>
@@ -234,6 +283,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const value = e.target.value.trim();
+                          setFieldValue('surname', capitalizeWords(value));
+                        }}
                       />
                     </div>
                     <div className="form-col postal-code-field">
@@ -243,9 +296,16 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onChange={(e) => {
+                          // Convert to uppercase as user types
+                          const value = e.target.value.toUpperCase();
+                          setFieldValue('postalCode', value);
+                        }}
                         onBlur={(e) => {
                           // First let Formik handle the blur event
-                          const postalCode = e.target.value.trim();
+                          const postalCode = e.target.value.trim().toUpperCase();
+                          setFieldValue('postalCode', postalCode);
+                          
                           if (postalCode && postalCode.length >= 3) {
                             // Only fetch addresses if postal code is valid format
                             const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
