@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormField from './ui/form-field';
@@ -13,6 +13,10 @@ import './CreditSearchForm.css';
  * It includes fields for personal information and a confirmation checkbox.
  */
 const CreditSearchForm = () => {
+  // State for address options
+  const [addressOptions, setAddressOptions] = useState([]);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
+
   // Title options
   const titleOptions = [
     { value: 'Mr', label: 'Mr' },
@@ -60,15 +64,45 @@ const CreditSearchForm = () => {
         'Please enter a valid postal code'
       ),
     addressLine: Yup.string()
-      .when('postalCode', {
-        is: (postalCode) => postalCode && postalCode.length > 0,
-        then: Yup.string().required('Address is required when postal code is provided'),
-        otherwise: Yup.string()
+      .test('addressRequired', 'Address is required when postal code is provided', function(value) {
+        const { postalCode } = this.parent;
+        if (postalCode && postalCode.length > 0) {
+          return !!value;
+        }
+        return true;
       }),
     confirmationCheckbox: Yup.boolean()
       .oneOf([true], 'You must accept the terms and conditions')
       .required('You must accept the terms and conditions')
   });
+
+  // Mock function to fetch addresses by postal code
+  const fetchAddressesByPostalCode = async (postalCode) => {
+    // In a real application, this would be an API call
+    // For now, we'll simulate a delay and return mock data
+    setIsLoadingAddresses(true);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock response data
+      const mockAddresses = [
+        { value: '1 Main Street, London', label: '1 Main Street, London' },
+        { value: '2 Main Street, London', label: '2 Main Street, London' },
+        { value: '3 Main Street, London', label: '3 Main Street, London' },
+        { value: '4 Main Street, London', label: '4 Main Street, London' },
+        { value: '5 Main Street, London', label: '5 Main Street, London' },
+      ];
+      
+      setAddressOptions(mockAddresses);
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+      setAddressOptions([]);
+    } finally {
+      setIsLoadingAddresses(false);
+    }
+  };
 
   // Form submission handler
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
@@ -104,112 +138,127 @@ const CreditSearchForm = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, errors, touched }) => (
-            <Form className="credit-search-form">
-              <div className="form-grid">
-                <FormField
-                  label="Title"
-                  name="title"
-                  as="select"
-                  options={titleOptions}
-                  required
-                  errors={errors}
-                  touched={touched}
-                />
+          {({ isSubmitting, errors, touched, values, setFieldValue }) => {
+            // Effect to fetch addresses when postal code changes
+            useEffect(() => {
+              if (values.postalCode && values.postalCode.length >= 5) {
+                fetchAddressesByPostalCode(values.postalCode);
+              } else {
+                setAddressOptions([]);
+                setFieldValue('addressLine', '');
+              }
+            }, [values.postalCode, setFieldValue]);
+            
+            return (
+              <Form className="credit-search-form">
+                <div className="form-grid">
+                  <FormField
+                    label="Title"
+                    name="title"
+                    as="select"
+                    options={titleOptions}
+                    required
+                    errors={errors}
+                    touched={touched}
+                  />
 
-                <FormField 
-                  label="First Name" 
-                  name="firstName" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                  <FormField 
+                    label="First Name" 
+                    name="firstName" 
+                    required 
+                    errors={errors} 
+                    touched={touched} 
+                  />
 
-                <FormField
-                  label="Middle Name"
-                  name="middleName"
-                  helpText="Optional"
-                  errors={errors}
-                  touched={touched}
-                />
+                  <FormField
+                    label="Middle Name"
+                    name="middleName"
+                    helpText="Optional"
+                    errors={errors}
+                    touched={touched}
+                  />
 
-                <FormField 
-                  label="Last Name" 
-                  name="lastName" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                  <FormField 
+                    label="Last Name" 
+                    name="lastName" 
+                    required 
+                    errors={errors} 
+                    touched={touched} 
+                  />
 
-                <FormField
-                  label="Date of Birth"
-                  name="dateOfBirth"
-                  type="date"
-                  required
-                  errors={errors}
-                  touched={touched}
-                />
+                  <FormField
+                    label="Date of Birth"
+                    name="dateOfBirth"
+                    type="date"
+                    required
+                    errors={errors}
+                    touched={touched}
+                  />
 
-                <FormField
-                  label="Mobile"
-                  name="mobile"
-                  type="tel"
-                  placeholder="e.g., +44 7123 456789"
-                  required
-                  errors={errors}
-                  touched={touched}
-                />
+                  <FormField
+                    label="Mobile"
+                    name="mobile"
+                    type="tel"
+                    placeholder="e.g., +44 7123 456789"
+                    required
+                    errors={errors}
+                    touched={touched}
+                  />
 
-                <FormField
-                  label="Email"
-                  name="email"
-                  type="email"
-                  required
-                  errors={errors}
-                  touched={touched}
-                  className="span-full"
-                />
+                  <FormField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    required
+                    errors={errors}
+                    touched={touched}
+                    className="span-full"
+                  />
 
-                <FormField 
-                  label="Postal Code" 
-                  name="postalCode" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                  <FormField 
+                    label="Postal Code" 
+                    name="postalCode" 
+                    required 
+                    errors={errors} 
+                    touched={touched} 
+                  />
 
-                <FormField
-                  label="Address Line"
-                  name="addressLine"
-                  required
-                  errors={errors}
-                  touched={touched}
-                  className="span-full"
-                  helpText="This field will be auto-populated in the future based on postal code lookup."
-                />
+                  <FormField
+                    label="Address Line"
+                    name="addressLine"
+                    as="select"
+                    placeholder="Select address"
+                    options={addressOptions}
+                    required
+                    errors={errors}
+                    touched={touched}
+                    className="span-full"
+                    helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
+                  />
 
-                <CheckboxField
-                  label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
-                  name="confirmationCheckbox"
-                  required
-                  errors={errors}
-                  touched={touched}
-                  className="span-full"
-                />
+                  <CheckboxField
+                    label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
+                    name="confirmationCheckbox"
+                    required
+                    errors={errors}
+                    touched={touched}
+                    className="span-full"
+                  />
 
-                <div className="form-actions span-full">
-                  <CustomButton
-                    type="submit"
-                    disabled={isSubmitting}
-                    isLoading={isSubmitting}
-                    className="w-full md:w-auto"
-                  >
-                    Submit
-                  </CustomButton>
+                  <div className="form-actions span-full">
+                    <CustomButton
+                      type="submit"
+                      disabled={isSubmitting}
+                      isLoading={isSubmitting}
+                      className="w-full md:w-auto"
+                    >
+                      Submit
+                    </CustomButton>
+                  </div>
                 </div>
-              </div>
-            </Form>
-          )}
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </div>
