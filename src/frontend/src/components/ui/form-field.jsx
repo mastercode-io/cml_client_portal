@@ -19,8 +19,6 @@ import { Field, ErrorMessage } from 'formik';
  * @param {Object} props.touched - Formik touched object
  * @param {string} props.helpText - Help text to display below the field
  * @param {string} props.className - Additional CSS classes
- * @param {Function} props.onChange - onChange event handler
- * @param {Function} props.onBlur - onBlur event handler
  */
 const FormField = ({
   label,
@@ -34,8 +32,7 @@ const FormField = ({
   touched,
   helpText,
   className = '',
-  onChange,
-  onBlur
+  ...rest
 }) => {
   const hasError = errors[name] && touched[name];
   
@@ -52,6 +49,7 @@ const FormField = ({
           id={name}
           name={name}
           className={`form-select ${hasError ? 'form-input-error' : ''}`}
+          {...rest}
         >
           <option value="" disabled>{placeholder || `Select ${label}`}</option>
           {options.map((option) => (
@@ -67,6 +65,7 @@ const FormField = ({
           name={name}
           placeholder={placeholder}
           className={`form-input ${hasError ? 'form-input-error' : ''}`}
+          {...rest}
         />
       ) : (
         <Field
@@ -75,8 +74,7 @@ const FormField = ({
           name={name}
           placeholder={placeholder}
           className={`form-input ${hasError ? 'form-input-error' : ''}`}
-          onChange={onChange}
-          onBlur={onBlur}
+          {...rest}
         />
       )}
       
