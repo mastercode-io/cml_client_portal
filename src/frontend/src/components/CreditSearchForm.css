@@ -209,11 +209,11 @@
 
 /* Custom field margins */
 .postal-code-field {
-  margin-top: calc(1rem - 5px);
+  margin-top: 0.7rem;
 }
 
 .address-field {
-  margin-top: calc(1rem - 10px);
+  margin-top: 0.4rem;
 }
 
 /* Form actions */
