@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import FormField from './ui/form-field';
 import CheckboxField from './ui/checkbox-field';
 import DatePicker from './ui/date-picker';
-import CustomButton from './ui/custom-button';
+import { CustomButton } from './ui/custom-button';
 import './CreditSearchForm.css';
 
 /**
