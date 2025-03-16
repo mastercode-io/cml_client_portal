@@ -15,8 +15,8 @@ const DatePicker = ({
   setFieldValue
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date(maxDate));
+  const [currentYear, setCurrentYear] = useState(maxDate.getFullYear());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -308,7 +308,7 @@ const DatePicker = ({
             )}
             
             {showYearPicker && (
-              <div className="year-picker" ref={yearPickerRef} style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              <div className="year-picker" ref={yearPickerRef}>
                 {generateYears()}
               </div>
             )}
