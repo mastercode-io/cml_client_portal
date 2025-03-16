@@ -32,7 +32,7 @@ const CreditSearchForm = () => {
     title: '',
     firstName: '',
     middleName: '',
-    lastName: '',
+    surname: '',
     dateOfBirth: '',
     mobile: '',
     email: '',
@@ -45,7 +45,7 @@ const CreditSearchForm = () => {
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
     firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    surname: Yup.string().required('Surname is required'),
     dateOfBirth: Yup.date()
       .required('Date of birth is required')
       .max(new Date('2003-12-31'), 'Date of birth cannot be after 2003-12-31'),
@@ -124,6 +124,12 @@ const CreditSearchForm = () => {
     }, 1000);
   };
 
+  // Clear form handler
+  const handleClearForm = (resetForm) => {
+    resetForm();
+    setAddressOptions([]);
+  };
+
   return (
     <div className="credit-search-container">
       <div className="credit-search-card">
@@ -139,7 +145,7 @@ const CreditSearchForm = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, errors, touched, values, setFieldValue }) => {
+          {({ isSubmitting, errors, touched, values, setFieldValue, resetForm }) => {
             // Effect to fetch addresses when postal code changes
             useEffect(() => {
               if (values.postalCode && values.postalCode.length >= 5) {
@@ -153,110 +159,124 @@ const CreditSearchForm = () => {
             return (
               <Form className="credit-search-form">
                 <div className="form-grid">
-                  <FormField
-                    label="Title"
-                    name="title"
-                    as="select"
-                    options={titleOptions}
-                    required
-                    errors={errors}
-                    touched={touched}
-                  />
+                  <div className="form-column left-column">
+                    <FormField
+                      label="Title"
+                      name="title"
+                      as="select"
+                      options={titleOptions}
+                      required
+                      errors={errors}
+                      touched={touched}
+                    />
 
-                  <FormField 
-                    label="First Name" 
-                    name="firstName" 
-                    required 
-                    errors={errors} 
-                    touched={touched} 
-                  />
+                    <FormField 
+                      label="First Name" 
+                      name="firstName" 
+                      required 
+                      errors={errors} 
+                      touched={touched} 
+                    />
 
-                  <FormField
-                    label="Middle Name"
-                    name="middleName"
-                    helpText="Optional"
-                    errors={errors}
-                    touched={touched}
-                  />
+                    <FormField
+                      label="Middle Name"
+                      name="middleName"
+                      helpText="Optional"
+                      errors={errors}
+                      touched={touched}
+                    />
 
-                  <FormField 
-                    label="Last Name" 
-                    name="lastName" 
-                    required 
-                    errors={errors} 
-                    touched={touched} 
-                  />
+                    <FormField 
+                      label="Surname" 
+                      name="surname" 
+                      required 
+                      errors={errors} 
+                      touched={touched} 
+                    />
+                  </div>
 
-                  <DatePicker
-                    label="Date of Birth"
-                    name="dateOfBirth"
-                    required
-                    errors={errors}
-                    touched={touched}
-                    setFieldValue={setFieldValue}
-                    minDate={new Date('1920-01-01')}
-                    maxDate={new Date('2003-12-31')}
-                    helpText="Select your date of birth"
-                  />
+                  <div className="form-column right-column">
+                    <DatePicker
+                      label="Date of Birth"
+                      name="dateOfBirth"
+                      required
+                      errors={errors}
+                      touched={touched}
+                      setFieldValue={setFieldValue}
+                      minDate={new Date('1920-01-01')}
+                      maxDate={new Date('2003-12-31')}
+                      helpText="Select your date of birth"
+                    />
 
-                  <FormField
-                    label="Mobile"
-                    name="mobile"
-                    type="tel"
-                    placeholder="e.g., +44 7123 456789"
-                    required
-                    errors={errors}
-                    touched={touched}
-                  />
+                    <FormField
+                      label="Mobile"
+                      name="mobile"
+                      type="tel"
+                      placeholder="e.g., +44 7123 456789"
+                      required
+                      errors={errors}
+                      touched={touched}
+                    />
 
-                  <FormField
-                    label="Email"
-                    name="email"
-                    type="email"
-                    required
-                    errors={errors}
-                    touched={touched}
-                    className="span-full"
-                  />
+                    <FormField
+                      label="Email"
+                      name="email"
+                      type="email"
+                      required
+                      errors={errors}
+                      touched={touched}
+                    />
+                  </div>
 
-                  <FormField 
-                    label="Postal Code" 
-                    name="postalCode" 
-                    required 
-                    errors={errors} 
-                    touched={touched} 
-                  />
+                  <div className="form-full-width">
+                    <FormField 
+                      label="Postal Code" 
+                      name="postalCode" 
+                      required 
+                      errors={errors} 
+                      touched={touched} 
+                    />
 
-                  <FormField
-                    label="Address Line"
-                    name="addressLine"
-                    as="select"
-                    placeholder="Select address"
-                    options={addressOptions}
-                    required
-                    errors={errors}
-                    touched={touched}
-                    className="span-full"
-                    helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
-                  />
+                    <FormField
+                      label="Address Line"
+                      name="addressLine"
+                      as="select"
+                      placeholder="Select address"
+                      options={addressOptions}
+                      required
+                      errors={errors}
+                      touched={touched}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
+                    />
+                  </div>
 
-                  <CheckboxField
-                    label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
-                    name="confirmationCheckbox"
-                    required
-                    errors={errors}
-                    touched={touched}
-                    className="span-full"
-                  />
+                  <div className="form-full-width">
+                    <CheckboxField
+                      label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
+                      name="confirmationCheckbox"
+                      required
+                      errors={errors}
+                      touched={touched}
+                      labelFirst={false}
+                    />
+                  </div>
 
-                  <div className="form-actions span-full">
+                  <div className="form-actions form-full-width">
+                    <CustomButton
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleClearForm(resetForm)}
+                      className="clear-button"
+                    >
+                      Clear
+                    </CustomButton>
                     <CustomButton
                       type="submit"
                       disabled={isSubmitting}
                       isLoading={isSubmitting}
-                      className="w-full md:w-auto"
+                      className="submit-button"
                     >
-                      Submit
+                      Search
                     </CustomButton>
                   </div>
                 </div>
