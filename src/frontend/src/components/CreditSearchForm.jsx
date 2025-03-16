@@ -227,7 +227,7 @@ const CreditSearchForm = () => {
                     />
                   </div>
 
-                  <div className="form-full-width">
+                  <div className="form-full-width postal-code-field">
                     <FormField
                       label="Postal Code"
                       name="postalCode"
@@ -237,7 +237,7 @@ const CreditSearchForm = () => {
                     />
                   </div>
                   
-                  <div className="form-full-width">
+                  <div className="form-full-width address-field">
                     <FormField
                       label="Address Line"
                       name="addressLine"

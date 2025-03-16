@@ -207,6 +207,15 @@
   color: #ef4444;
 }
 
+/* Custom field margins */
+.postal-code-field {
+  margin-top: calc(1rem - 5px);
+}
+
+.address-field {
+  margin-top: calc(1rem - 10px);
+}
+
 /* Form actions */
 .form-actions {
   display: flex;
