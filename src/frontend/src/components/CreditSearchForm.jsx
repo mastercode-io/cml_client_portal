@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import FormField from './ui/form-field';
 import CheckboxField from './ui/checkbox-field';
 import DatePicker from './ui/date-picker';
-import { CustomButton } from './ui/custom-button';
+import CustomButton from './ui/custom-button';
 import './CreditSearchForm.css';
 
 /**
@@ -17,9 +17,11 @@ const CreditSearchForm = () => {
   // State for address options
   const [addressOptions, setAddressOptions] = useState([]);
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
+  const [showAddressField, setShowAddressField] = useState(false);
 
   // Title options
   const titleOptions = [
+    { value: '', label: 'Select title' },
     { value: 'Mr', label: 'Mr' },
     { value: 'Mrs', label: 'Mrs' },
     { value: 'Ms', label: 'Ms' },
@@ -64,42 +66,43 @@ const CreditSearchForm = () => {
         /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$|^[0-9]{5}(-[0-9]{4})?$/i,
         'Please enter a valid postal code'
       ),
-    addressLine: Yup.string()
-      .test('addressRequired', 'Address is required when postal code is provided', function(value) {
-        const { postalCode } = this.parent;
-        if (postalCode && postalCode.length > 0) {
-          return !!value;
-        }
-        return true;
-      }),
+    addressLine: Yup.string().when('postalCode', {
+      is: (postalCode) => postalCode && postalCode.length >= 3,
+      then: () => Yup.string().required('Address is required'),
+      otherwise: () => Yup.string(),
+    }),
     confirmationCheckbox: Yup.boolean()
       .oneOf([true], 'You must accept the terms and conditions')
       .required('You must accept the terms and conditions')
   });
 
-  // Mock function to fetch addresses by postal code
+  // Function to fetch addresses by postal code
   const fetchAddressesByPostalCode = async (postalCode) => {
-    // In a real application, this would be an API call
-    // For now, we'll simulate a delay and return mock data
+    if (!postalCode || postalCode.length < 3) {
+      setShowAddressField(false);
+      setAddressOptions([]);
+      return;
+    }
+    
     setIsLoadingAddresses(true);
+    setShowAddressField(true);
     
     try {
-      // Simulate API call delay
+      // Simulate API call with timeout
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock response data
+      // Generate dummy addresses based on postal code
       const mockAddresses = [
-        { value: '1 Main Street, London', label: '1 Main Street, London' },
-        { value: '2 Main Street, London', label: '2 Main Street, London' },
-        { value: '3 Main Street, London', label: '3 Main Street, London' },
-        { value: '4 Main Street, London', label: '4 Main Street, London' },
-        { value: '5 Main Street, London', label: '5 Main Street, London' },
+        { value: `${postalCode}_1`, label: `${postalCode} - 123 Main Street` },
+        { value: `${postalCode}_2`, label: `${postalCode} - 456 Oak Avenue` },
+        { value: `${postalCode}_3`, label: `${postalCode} - 789 Pine Boulevard` },
+        { value: `${postalCode}_4`, label: `${postalCode} - 101 Cedar Lane` },
       ];
       
-      setAddressOptions(mockAddresses);
+      setAddressOptions([{ value: '', label: 'Select address' }, ...mockAddresses]);
     } catch (error) {
       console.error('Error fetching addresses:', error);
-      setAddressOptions([]);
+      setAddressOptions([{ value: '', label: 'No addresses found' }]);
     } finally {
       setIsLoadingAddresses(false);
     }
@@ -128,6 +131,7 @@ const CreditSearchForm = () => {
   const handleClearForm = (resetForm) => {
     resetForm();
     setAddressOptions([]);
+    setShowAddressField(false);
   };
 
   return (
@@ -148,10 +152,11 @@ const CreditSearchForm = () => {
           {({ isSubmitting, errors, touched, values, setFieldValue, resetForm }) => {
             // Effect to fetch addresses when postal code changes
             useEffect(() => {
-              if (values.postalCode && values.postalCode.length >= 5) {
+              if (values.postalCode && values.postalCode.length >= 3) {
                 fetchAddressesByPostalCode(values.postalCode);
               } else {
                 setAddressOptions([]);
+                setShowAddressField(false);
                 setFieldValue('addressLine', '');
               }
             }, [values.postalCode, setFieldValue]);
@@ -256,19 +261,21 @@ const CreditSearchForm = () => {
                   </div>
 
                   {/* Address field */}
-                  <div className="form-full-width">
-                    <FormField
-                      label="Address Line"
-                      name="addressLine"
-                      as="select"
-                      placeholder="Select address"
-                      options={addressOptions}
-                      required
-                      errors={errors}
-                      touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
-                    />
-                  </div>
+                  {showAddressField && (
+                    <div className="form-full-width">
+                      <FormField
+                        label="Address Line"
+                        name="addressLine"
+                        as="select"
+                        placeholder="Select address"
+                        options={addressOptions}
+                        required
+                        errors={errors}
+                        touched={touched}
+                        helpText={isLoadingAddresses ? "Loading addresses..." : "Select an address from the list"}
+                      />
+                    </div>
+                  )}
 
                   {/* Confirmation checkbox */}
                   <div className="form-full-width">
