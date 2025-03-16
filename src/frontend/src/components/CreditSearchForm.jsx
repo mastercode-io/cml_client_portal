@@ -113,7 +113,8 @@ const CreditSearchForm = () => {
     } else if (phoneNumber.length <= 10) {
       return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
     } else {
-      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 10)} ${phoneNumber.slice(10, 13)}`;
+      // Limit to 11 digits max
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 11)}`.trim();
     }
   };
   
@@ -167,7 +168,7 @@ const CreditSearchForm = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, errors, touched, values, setFieldValue, resetForm }) => {
+          {({ isSubmitting, errors, touched, values, setFieldValue, resetForm, handleChange, handleBlur }) => {
             // Effect to fetch addresses when postal code changes
             useEffect(() => {
               if (values.postalCode && values.postalCode.length >= 3) {
@@ -220,6 +221,7 @@ const CreditSearchForm = () => {
                         onBlur={(e) => {
                           const value = e.target.value.trim();
                           setFieldValue('firstName', capitalizeWords(value));
+                          handleBlur(e); // Call Formik's handleBlur
                         }}
                       />
                     </div>
@@ -232,12 +234,15 @@ const CreditSearchForm = () => {
                         errors={errors}
                         touched={touched}
                         onChange={(e) => {
+                          // Format the mobile number as the user types
                           const formattedValue = formatMobileNumber(e.target.value);
-                          setFieldValue('mobile', formattedValue);
+                          e.target.value = formattedValue; // Update the input field directly
+                          handleChange(e); // Call Formik's handleChange
                         }}
                         onBlur={(e) => {
                           const value = e.target.value.trim();
                           setFieldValue('mobile', value);
+                          handleBlur(e); // Call Formik's handleBlur
                         }}
                       />
                     </div>
@@ -255,6 +260,7 @@ const CreditSearchForm = () => {
                         onBlur={(e) => {
                           const value = e.target.value.trim();
                           setFieldValue('middleName', capitalizeWords(value));
+                          handleBlur(e); // Call Formik's handleBlur
                         }}
                       />
                     </div>
@@ -269,6 +275,7 @@ const CreditSearchForm = () => {
                         onBlur={(e) => {
                           const value = e.target.value.trim().toLowerCase();
                           setFieldValue('email', value);
+                          handleBlur(e); // Call Formik's handleBlur
                         }}
                       />
                     </div>
@@ -286,6 +293,7 @@ const CreditSearchForm = () => {
                         onBlur={(e) => {
                           const value = e.target.value.trim();
                           setFieldValue('surname', capitalizeWords(value));
+                          handleBlur(e); // Call Formik's handleBlur
                         }}
                       />
                     </div>
@@ -299,12 +307,14 @@ const CreditSearchForm = () => {
                         onChange={(e) => {
                           // Convert to uppercase as user types
                           const value = e.target.value.toUpperCase();
-                          setFieldValue('postalCode', value);
+                          e.target.value = value; // Update the input field directly
+                          handleChange(e); // Call Formik's handleChange
                         }}
                         onBlur={(e) => {
                           // First let Formik handle the blur event
                           const postalCode = e.target.value.trim().toUpperCase();
                           setFieldValue('postalCode', postalCode);
+                          handleBlur(e); // Call Formik's handleBlur
                           
                           if (postalCode && postalCode.length >= 3) {
                             // Only fetch addresses if postal code is valid format
