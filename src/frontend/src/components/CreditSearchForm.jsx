@@ -166,7 +166,7 @@ const CreditSearchForm = () => {
                 <div className="form-grid">
                   {/* First row of fields */}
                   <div className="form-row">
-                    <div className="form-col">
+                    <div className="form-col title-field">
                       <FormField
                         label="Title"
                         name="title"
@@ -178,7 +178,7 @@ const CreditSearchForm = () => {
                         touched={touched}
                       />
                     </div>
-                    <div className="form-col">
+                    <div className="form-col dob-field">
                       <DatePicker
                         label="Date of Birth"
                         name="dateOfBirth"
@@ -194,7 +194,7 @@ const CreditSearchForm = () => {
 
                   {/* Second row of fields */}
                   <div className="form-row">
-                    <div className="form-col">
+                    <div className="form-col first-name-field">
                       <FormField
                         label="First Name"
                         name="firstName"
@@ -203,7 +203,7 @@ const CreditSearchForm = () => {
                         touched={touched}
                       />
                     </div>
-                    <div className="form-col">
+                    <div className="form-col mobile-field">
                       <FormField
                         label="Mobile"
                         name="mobile"
@@ -217,7 +217,7 @@ const CreditSearchForm = () => {
 
                   {/* Third row of fields */}
                   <div className="form-row">
-                    <div className="form-col">
+                    <div className="form-col middle-name-field">
                       <FormField
                         label="Middle Name"
                         name="middleName"
@@ -226,7 +226,7 @@ const CreditSearchForm = () => {
                         touched={touched}
                       />
                     </div>
-                    <div className="form-col">
+                    <div className="form-col email-field">
                       <FormField
                         label="Email"
                         name="email"
@@ -240,7 +240,7 @@ const CreditSearchForm = () => {
 
                   {/* Fourth row of fields */}
                   <div className="form-row">
-                    <div className="form-col">
+                    <div className="form-col surname-field">
                       <FormField
                         label="Surname"
                         name="surname"
@@ -249,7 +249,7 @@ const CreditSearchForm = () => {
                         touched={touched}
                       />
                     </div>
-                    <div className="form-col">
+                    <div className="form-col postal-code-field">
                       <FormField
                         label="Postal Code"
                         name="postalCode"
@@ -262,7 +262,7 @@ const CreditSearchForm = () => {
 
                   {/* Address field */}
                   {showAddressField && (
-                    <div className="form-full-width">
+                    <div className="form-full-width address-field">
                       <FormField
                         label="Address Line"
                         name="addressLine"
@@ -278,7 +278,7 @@ const CreditSearchForm = () => {
                   )}
 
                   {/* Confirmation checkbox */}
-                  <div className="form-full-width">
+                  <div className="form-full-width checkbox-field">
                     <CheckboxField
                       label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
                       name="confirmationCheckbox"

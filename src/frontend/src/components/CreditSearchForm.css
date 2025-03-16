@@ -83,6 +83,7 @@
   width: 100%;
 }
 
+/* Mobile layout - reorder fields */
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
@@ -91,6 +92,19 @@
   .form-col {
     width: 100%;
   }
+  
+  /* Custom order for mobile */
+  .title-field { order: 1; }
+  .first-name-field { order: 2; }
+  .middle-name-field { order: 3; }
+  .surname-field { order: 4; }
+  .dob-field { order: 5; }
+  .mobile-field { order: 6; }
+  .email-field { order: 7; }
+  .postal-code-field { order: 8; }
+  .address-field { order: 9; }
+  .checkbox-field { order: 10; }
+  .form-actions { order: 11; }
 }
 
 /* Form field styles */
