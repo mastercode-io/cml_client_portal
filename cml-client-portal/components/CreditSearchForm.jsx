@@ -1,93 +1,78 @@
-import React from 'react';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
-import FormField from './ui/form-field';
-import CheckboxField from './ui/checkbox-field';
-import { CustomButton } from './ui/custom-button';
-import './CreditSearchForm.css';
+"use client"
+import { Formik, Form } from "formik"
+import * as Yup from "yup"
+import FormField from "./ui/form-field"
+import CheckboxField from "./ui/checkbox-field"
+import { CustomButton } from "./ui/custom-button"
+import "./CreditSearchForm.css"
 
-/**
- * CreditSearchForm Component
- * 
- * This component renders a form for credit search with validation using Formik and Yup.
- * It includes fields for personal information and a confirmation checkbox.
- */
 const CreditSearchForm = () => {
   // Title options
   const titleOptions = [
-    { value: 'Mr', label: 'Mr' },
-    { value: 'Mrs', label: 'Mrs' },
-    { value: 'Ms', label: 'Ms' },
-    { value: 'Dr', label: 'Dr' },
-    { value: 'Other', label: 'Other' },
-  ];
+    { value: "Mr", label: "Mr" },
+    { value: "Mrs", label: "Mrs" },
+    { value: "Ms", label: "Ms" },
+    { value: "Dr", label: "Dr" },
+    { value: "Other", label: "Other" },
+  ]
 
   // Initial form values
   const initialValues = {
-    title: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dateOfBirth: '',
-    mobile: '',
-    email: '',
-    postalCode: '',
-    addressLine: '',
-    confirmationCheckbox: false
-  };
+    title: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    dateOfBirth: "",
+    mobile: "",
+    email: "",
+    postalCode: "",
+    addressLine: "",
+    confirmationCheckbox: false,
+  }
 
   // Validation schema using Yup
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    title: Yup.string().required("Title is required"),
+    firstName: Yup.string().required("First name is required"),
+    lastName: Yup.string().required("Last name is required"),
     dateOfBirth: Yup.date()
-      .required('Date of birth is required')
-      .max(new Date(), 'Date of birth cannot be in the future'),
+      .required("Date of birth is required")
+      .max(new Date(), "Date of birth cannot be in the future"),
     mobile: Yup.string()
-      .required('Mobile number is required')
-      .matches(
-        /^\+?[0-9]{10,15}$/,
-        'Please enter a valid mobile number'
-      ),
-    email: Yup.string()
-      .email('Invalid email format')
-      .required('Email is required'),
+      .required("Mobile number is required")
+      .matches(/^\+?[0-9]{10,15}$/, "Please enter a valid mobile number"),
+    email: Yup.string().email("Invalid email format").required("Email is required"),
     postalCode: Yup.string()
-      .required('Postal code is required')
-      .matches(
-        /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$|^[0-9]{5}(-[0-9]{4})?$/i,
-        'Please enter a valid postal code'
-      ),
-    addressLine: Yup.string()
-      .when('postalCode', {
-        is: (postalCode) => postalCode && postalCode.length > 0,
-        then: Yup.string().required('Address is required when postal code is provided'),
-        otherwise: Yup.string()
-      }),
+      .required("Postal code is required")
+      .matches(/^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$|^[0-9]{5}(-[0-9]{4})?$/i, "Please enter a valid postal code"),
+    addressLine: Yup.string().when("postalCode", {
+      is: (postalCode) => postalCode && postalCode.length > 0,
+      then: Yup.string().required("Address is required when postal code is provided"),
+      otherwise: Yup.string(),
+    }),
     confirmationCheckbox: Yup.boolean()
-      .oneOf([true], 'You must accept the terms and conditions')
-      .required('You must accept the terms and conditions')
-  });
+      .oneOf([true], "You must accept the terms and conditions")
+      .required("You must accept the terms and conditions"),
+  })
 
   // Form submission handler
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     // Log form values to console (to be replaced with API call later)
-    console.log('Form values:', values);
-    
+    console.log("Form values:", values)
+
     // In a real application, we would call an API endpoint here
     // Example: checkUserExists(values.email).then(userExists => { ... })
-    
+
     // Reset form and set submitting to false
     setTimeout(() => {
-      setSubmitting(false);
+      setSubmitting(false)
       // resetForm(); // Uncomment to reset form after submission
-      
+
       // Here we would handle redirection based on whether the user exists
       // If user exists: redirect to login page
       // If new user: create client and redirect to claims list
-    }, 1000);
-  };
+    }, 1000)
+  }
 
   return (
     <div className="credit-search-container">
@@ -99,11 +84,7 @@ const CreditSearchForm = () => {
           </p>
         </div>
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ isSubmitting, errors, touched }) => (
             <Form className="credit-search-form">
               <div className="form-grid">
@@ -117,13 +98,7 @@ const CreditSearchForm = () => {
                   touched={touched}
                 />
 
-                <FormField 
-                  label="First Name" 
-                  name="firstName" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                <FormField label="First Name" name="firstName" required errors={errors} touched={touched} />
 
                 <FormField
                   label="Middle Name"
@@ -133,13 +108,7 @@ const CreditSearchForm = () => {
                   touched={touched}
                 />
 
-                <FormField 
-                  label="Last Name" 
-                  name="lastName" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                <FormField label="Last Name" name="lastName" required errors={errors} touched={touched} />
 
                 <FormField
                   label="Date of Birth"
@@ -170,13 +139,7 @@ const CreditSearchForm = () => {
                   className="span-full"
                 />
 
-                <FormField 
-                  label="Postal Code" 
-                  name="postalCode" 
-                  required 
-                  errors={errors} 
-                  touched={touched} 
-                />
+                <FormField label="Postal Code" name="postalCode" required errors={errors} touched={touched} />
 
                 <FormField
                   label="Address Line"
@@ -213,7 +176,8 @@ const CreditSearchForm = () => {
         </Formik>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CreditSearchForm;
+export default CreditSearchForm
+
