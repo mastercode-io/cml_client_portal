@@ -263,20 +263,20 @@ const CreditSearchForm = () => {
 
                   <div className="form-actions form-full-width">
                     <CustomButton
-                      type="button"
-                      variant="outline"
-                      onClick={() => handleClearForm(resetForm)}
-                      className="clear-button"
-                    >
-                      Clear
-                    </CustomButton>
-                    <CustomButton
                       type="submit"
                       disabled={isSubmitting}
                       isLoading={isSubmitting}
                       className="submit-button"
                     >
                       Search
+                    </CustomButton>
+                    <CustomButton
+                      type="button"
+                      variant="secondary"
+                      onClick={() => handleClearForm(resetForm)}
+                      className="clear-button"
+                    >
+                      Clear
                     </CustomButton>
                   </div>
                 </div>
