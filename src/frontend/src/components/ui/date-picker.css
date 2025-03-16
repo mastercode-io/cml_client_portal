@@ -70,9 +70,25 @@
   background-color: var(--border);
 }
 
-.current-month {
-  font-weight: 500;
+.current-month-year {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.month-year-selector {
+  background: none;
+  border: none;
   color: var(--text-dark);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+}
+
+.month-year-selector:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
 }
 
 .calendar-days-header {
@@ -125,4 +141,84 @@
 .calendar-day.selected {
   background-color: var(--primary);
   color: white;
+}
+
+/* Month Picker Styles */
+.month-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.month-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 0.5rem;
+}
+
+.month-item:hover {
+  background-color: var(--primary-light);
+}
+
+.month-item.current {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Year Picker Styles */
+.year-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.year-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 0.5rem;
+}
+
+.year-item:hover:not(.disabled) {
+  background-color: var(--primary-light);
+}
+
+.year-item.current {
+  background-color: var(--primary);
+  color: white;
+}
+
+.year-item.disabled {
+  color: var(--text-light);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer Styles */
+.calendar-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+}
+
+.date-range-info {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-light);
 }

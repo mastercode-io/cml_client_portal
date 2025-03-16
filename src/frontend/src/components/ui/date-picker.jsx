@@ -16,6 +16,10 @@ const DatePicker = ({
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const calendarRef = useRef(null);
   const hasError = errors[name] && touched[name];
 
@@ -24,6 +28,8 @@ const DatePicker = ({
     const handleClickOutside = (event) => {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
         setShowCalendar(false);
+        setShowMonthPicker(false);
+        setShowYearPicker(false);
       }
     };
 
@@ -33,11 +39,22 @@ const DatePicker = ({
     };
   }, []);
 
+  // Update input value when form value changes
+  useEffect(() => {
+    const formValue = document.getElementById(name)?.value;
+    if (formValue) {
+      const date = new Date(formValue);
+      if (!isNaN(date.getTime())) {
+        setInputValue(formatDisplayDate(formValue));
+      }
+    }
+  }, [name]);
+
   // Generate days for the current month
   const generateDays = () => {
     const days = [];
-    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-    const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+    const firstDay = new Date(currentYear, currentMonth.getMonth(), 1);
+    const lastDay = new Date(currentYear, currentMonth.getMonth() + 1, 0);
     
     // Add empty cells for days before the first day of the month
     const firstDayOfWeek = firstDay.getDay();
@@ -47,7 +64,7 @@ const DatePicker = ({
     
     // Add days of the month
     for (let day = 1; day <= lastDay.getDate(); day++) {
-      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+      const date = new Date(currentYear, currentMonth.getMonth(), day);
       const isDisabled = date > maxDate || date < minDate;
       const formattedDate = formatDate(date);
       
@@ -65,6 +82,57 @@ const DatePicker = ({
     return days;
   };
 
+  // Generate months for the month picker
+  const generateMonths = () => {
+    const months = [];
+    const monthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    
+    for (let i = 0; i < 12; i++) {
+      const isCurrentMonth = i === currentMonth.getMonth();
+      months.push(
+        <div 
+          key={i} 
+          className={`month-item ${isCurrentMonth ? 'current' : ''}`}
+          onClick={() => handleMonthSelect(i)}
+        >
+          {monthNames[i]}
+        </div>
+      );
+    }
+    
+    return months;
+  };
+
+  // Generate years for the year picker
+  const generateYears = () => {
+    const years = [];
+    const currentYearNum = currentYear;
+    const startYear = currentYearNum - 10;
+    const endYear = currentYearNum + 10;
+    
+    for (let year = startYear; year <= endYear; year++) {
+      const isCurrentYear = year === currentYearNum;
+      const isDisabled = 
+        (new Date(year, 11, 31) < minDate) || 
+        (new Date(year, 0, 1) > maxDate);
+      
+      years.push(
+        <div 
+          key={year} 
+          className={`year-item ${isCurrentYear ? 'current' : ''} ${isDisabled ? 'disabled' : ''}`}
+          onClick={() => !isDisabled && handleYearSelect(year)}
+        >
+          {year}
+        </div>
+      );
+    }
+    
+    return years;
+  };
+
   // Format date to YYYY-MM-DD
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -78,15 +146,32 @@ const DatePicker = ({
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(newMonth.getMonth() + direction);
     setCurrentMonth(newMonth);
+    setCurrentYear(newMonth.getFullYear());
+  };
+
+  // Handle month selection
+  const handleMonthSelect = (monthIndex) => {
+    const newMonth = new Date(currentYear, monthIndex, 1);
+    setCurrentMonth(newMonth);
+    setShowMonthPicker(false);
+  };
+
+  // Handle year selection
+  const handleYearSelect = (year) => {
+    setCurrentYear(year);
+    const newMonth = new Date(year, currentMonth.getMonth(), 1);
+    setCurrentMonth(newMonth);
+    setShowYearPicker(false);
   };
 
   // Handle date selection
   const handleDateSelect = (dateString) => {
     setFieldValue(name, dateString);
+    setInputValue(formatDisplayDate(dateString));
     setShowCalendar(false);
   };
 
-  // Format date for display
+  // Format date for display (DD-MM-YYYY)
   const formatDisplayDate = (dateString) => {
     if (!dateString) return '';
     
@@ -97,7 +182,44 @@ const DatePicker = ({
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${day}/${month}/${year}`;
+    return `${day}-${month}-${year}`;
+  };
+
+  // Handle manual input change
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    
+    // Try to parse the date
+    if (value.length === 10) { // DD-MM-YYYY format has 10 characters
+      const parts = value.split('-');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed in JS
+        const year = parseInt(parts[2], 10);
+        
+        const date = new Date(year, month, day);
+        
+        // Check if date is valid and within min-max range
+        if (!isNaN(date.getTime()) && date >= minDate && date <= maxDate) {
+          setFieldValue(name, formatDate(date));
+          setCurrentMonth(date);
+          setCurrentYear(date.getFullYear());
+        }
+      }
+    }
+  };
+
+  // Toggle month picker
+  const toggleMonthPicker = () => {
+    setShowMonthPicker(!showMonthPicker);
+    setShowYearPicker(false);
+  };
+
+  // Toggle year picker
+  const toggleYearPicker = () => {
+    setShowYearPicker(!showYearPicker);
+    setShowMonthPicker(false);
   };
 
   return (
@@ -109,14 +231,15 @@ const DatePicker = ({
       
       <div className="date-picker-container" ref={calendarRef}>
         <div className="date-input-container">
-          <Field 
+          <input 
             type="text"
             id={name}
             name={name}
             className={`form-input date-input ${hasError ? 'form-input-error' : ''}`}
-            placeholder="DD/MM/YYYY"
+            placeholder="DD-MM-YYYY"
             onClick={() => setShowCalendar(true)}
-            readOnly
+            value={inputValue}
+            onChange={handleInputChange}
           />
           <button 
             type="button" 
@@ -136,24 +259,52 @@ const DatePicker = ({
           <div className="calendar-dropdown">
             <div className="calendar-header">
               <button type="button" onClick={() => navigateMonth(-1)}>&lt;</button>
-              <div className="current-month">
-                {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+              <div className="current-month-year">
+                <button type="button" className="month-year-selector" onClick={toggleMonthPicker}>
+                  {currentMonth.toLocaleString('default', { month: 'long' })}
+                </button>
+                <button type="button" className="month-year-selector" onClick={toggleYearPicker}>
+                  {currentYear}
+                </button>
               </div>
               <button type="button" onClick={() => navigateMonth(1)}>&gt;</button>
             </div>
             
-            <div className="calendar-days-header">
-              <div>Su</div>
-              <div>Mo</div>
-              <div>Tu</div>
-              <div>We</div>
-              <div>Th</div>
-              <div>Fr</div>
-              <div>Sa</div>
-            </div>
+            {showMonthPicker && (
+              <div className="month-picker">
+                {generateMonths()}
+              </div>
+            )}
             
-            <div className="calendar-days">
-              {generateDays()}
+            {showYearPicker && (
+              <div className="year-picker">
+                {generateYears()}
+              </div>
+            )}
+            
+            {!showMonthPicker && !showYearPicker && (
+              <>
+                <div className="calendar-days-header">
+                  <div>Su</div>
+                  <div>Mo</div>
+                  <div>Tu</div>
+                  <div>We</div>
+                  <div>Th</div>
+                  <div>Fr</div>
+                  <div>Sa</div>
+                </div>
+                
+                <div className="calendar-days">
+                  {generateDays()}
+                </div>
+              </>
+            )}
+            
+            <div className="calendar-footer">
+              <div className="date-range-info">
+                <small>Min: {formatDisplayDate(formatDate(minDate))}</small>
+                <small>Max: {formatDisplayDate(formatDate(maxDate))}</small>
+              </div>
             </div>
           </div>
         )}
