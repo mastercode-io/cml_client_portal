@@ -32,7 +32,7 @@ const CheckboxField = ({ label, helpText, required, ...props }) => {
         />
         <label htmlFor={name} className="checkbox-label">
           {required && <span className="text-red-500">*</span>}
-          {label}
+          <span className="checkbox-text">{label}</span>
         </label>
       </div>
       {helpText && <div className="help-text">{helpText}</div>}

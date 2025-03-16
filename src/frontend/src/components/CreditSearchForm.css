@@ -186,16 +186,17 @@
 .checkbox-indent .checkbox-label {
   display: block;
   padding-left: 1.5rem;
-  text-indent: -1.5rem;
 }
 
-.checkbox-indent .checkbox-label span.text-red-500 {
-  position: relative;
-  display: inline;
-  left: auto;
-  top: auto;
-  margin-right: 0.25rem;
+.checkbox-indent .checkbox-label .text-red-500 {
+  position: absolute;
+  left: 0;
   color: #ef4444;
+}
+
+.checkbox-indent .checkbox-label .checkbox-text {
+  display: block;
+  text-indent: 0;
 }
 
 .checkbox-indent .error-message {
