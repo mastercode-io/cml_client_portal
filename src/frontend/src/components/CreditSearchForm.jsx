@@ -159,85 +159,104 @@ const CreditSearchForm = () => {
             return (
               <Form className="credit-search-form">
                 <div className="form-grid">
-                  <div className="form-column left-column">
-                    <FormField
-                      label="Title"
-                      name="title"
-                      as="select"
-                      options={titleOptions}
-                      required
-                      errors={errors}
-                      touched={touched}
-                    />
-
-                    <FormField 
-                      label="First Name" 
-                      name="firstName" 
-                      required 
-                      errors={errors} 
-                      touched={touched} 
-                    />
-
-                    <FormField
-                      label="Middle Name"
-                      name="middleName"
-                      placeholder="Optional"
-                      errors={errors}
-                      touched={touched}
-                    />
-
-                    <FormField 
-                      label="Surname" 
-                      name="surname" 
-                      required 
-                      errors={errors} 
-                      touched={touched} 
-                    />
+                  {/* First row of fields */}
+                  <div className="form-row">
+                    <div className="form-col">
+                      <FormField
+                        label="Title"
+                        name="title"
+                        as="select"
+                        placeholder="Select title"
+                        options={titleOptions}
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
+                    <div className="form-col">
+                      <DatePicker
+                        label="Date of Birth"
+                        name="dateOfBirth"
+                        required
+                        errors={errors}
+                        touched={touched}
+                        setFieldValue={setFieldValue}
+                        minDate={new Date('1920-01-01')}
+                        maxDate={new Date('2003-12-31')}
+                      />
+                    </div>
                   </div>
 
-                  <div className="form-column right-column">
-                    <DatePicker
-                      label="Date of Birth"
-                      name="dateOfBirth"
-                      required
-                      errors={errors}
-                      touched={touched}
-                      setFieldValue={setFieldValue}
-                      minDate={new Date('1920-01-01')}
-                      maxDate={new Date('2003-12-31')}
-                    />
-
-                    <FormField
-                      label="Mobile"
-                      name="mobile"
-                      type="tel"
-                      placeholder="e.g., +44 7123 456789"
-                      required
-                      errors={errors}
-                      touched={touched}
-                    />
-
-                    <FormField
-                      label="Email"
-                      name="email"
-                      type="email"
-                      required
-                      errors={errors}
-                      touched={touched}
-                    />
+                  {/* Second row of fields */}
+                  <div className="form-row">
+                    <div className="form-col">
+                      <FormField
+                        label="First Name"
+                        name="firstName"
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
+                    <div className="form-col">
+                      <FormField
+                        label="Mobile"
+                        name="mobile"
+                        type="tel"
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
                   </div>
 
-                  <div className="form-full-width postal-code-field">
-                    <FormField
-                      label="Postal Code"
-                      name="postalCode"
-                      required
-                      errors={errors}
-                      touched={touched}
-                    />
+                  {/* Third row of fields */}
+                  <div className="form-row">
+                    <div className="form-col">
+                      <FormField
+                        label="Middle Name"
+                        name="middleName"
+                        placeholder="Optional"
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
+                    <div className="form-col">
+                      <FormField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
                   </div>
-                  
-                  <div className="form-full-width address-field">
+
+                  {/* Fourth row of fields */}
+                  <div className="form-row">
+                    <div className="form-col">
+                      <FormField
+                        label="Surname"
+                        name="surname"
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
+                    <div className="form-col">
+                      <FormField
+                        label="Postal Code"
+                        name="postalCode"
+                        required
+                        errors={errors}
+                        touched={touched}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Address field */}
+                  <div className="form-full-width">
                     <FormField
                       label="Address Line"
                       name="addressLine"
@@ -251,6 +270,7 @@ const CreditSearchForm = () => {
                     />
                   </div>
 
+                  {/* Confirmation checkbox */}
                   <div className="form-full-width">
                     <CheckboxField
                       label="I confirm that I have had a finance in the past 6 years and that I was not aware of a commission payment being made to the dealer. I have read and accept T&Cs and the privacy policy. I understand that in order for us to investigate any further, we will conduct a soft credit check through our provider ValidID and that this will not affect my credit score."
@@ -263,6 +283,7 @@ const CreditSearchForm = () => {
                     />
                   </div>
 
+                  {/* Form actions */}
                   <div className="form-actions form-full-width">
                     <CustomButton
                       type="submit"
