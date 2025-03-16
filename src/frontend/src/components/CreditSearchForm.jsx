@@ -15,9 +15,8 @@ import './CreditSearchForm.css';
  */
 const CreditSearchForm = () => {
   // State for address options
-  const [addressOptions, setAddressOptions] = useState([]);
+  const [addressOptions, setAddressOptions] = useState([{ value: '', label: 'Enter postal code first' }]);
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
-  const [showAddressField, setShowAddressField] = useState(false);
 
   // Title options
   const titleOptions = [
@@ -79,13 +78,11 @@ const CreditSearchForm = () => {
   // Function to fetch addresses by postal code
   const fetchAddressesByPostalCode = async (postalCode) => {
     if (!postalCode || postalCode.length < 3) {
-      setShowAddressField(false);
-      setAddressOptions([]);
+      setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
       return;
     }
     
     setIsLoadingAddresses(true);
-    setShowAddressField(true);
     
     try {
       // Simulate API call with timeout
@@ -130,8 +127,7 @@ const CreditSearchForm = () => {
   // Clear form handler
   const handleClearForm = (resetForm) => {
     resetForm();
-    setAddressOptions([]);
-    setShowAddressField(false);
+    setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
   };
 
   return (
@@ -155,9 +151,7 @@ const CreditSearchForm = () => {
               if (values.postalCode && values.postalCode.length >= 3) {
                 fetchAddressesByPostalCode(values.postalCode);
               } else {
-                setAddressOptions([]);
-                setShowAddressField(false);
-                setFieldValue('addressLine', '');
+                setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
               }
             }, [values.postalCode, setFieldValue]);
             
@@ -256,26 +250,29 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={() => {
+                          if (values.postalCode) {
+                            fetchAddressesByPostalCode(values.postalCode);
+                          }
+                        }}
                       />
                     </div>
                   </div>
 
                   {/* Address field */}
-                  {showAddressField && (
-                    <div className="form-full-width address-field">
-                      <FormField
-                        label="Address Line"
-                        name="addressLine"
-                        as="select"
-                        placeholder="Select address"
-                        options={addressOptions}
-                        required
-                        errors={errors}
-                        touched={touched}
-                        helpText={isLoadingAddresses ? "Loading addresses..." : "Select an address from the list"}
-                      />
-                    </div>
-                  )}
+                  <div className="form-full-width address-field">
+                    <FormField
+                      label="Address Line"
+                      name="addressLine"
+                      as="select"
+                      placeholder="Select address"
+                      options={addressOptions}
+                      required
+                      errors={errors}
+                      touched={touched}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter postal code and tab out to see available addresses"}
+                    />
+                  </div>
 
                   {/* Confirmation checkbox */}
                   <div className="form-full-width checkbox-field">
