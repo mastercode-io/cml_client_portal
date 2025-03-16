@@ -5,6 +5,7 @@ import FormField from './ui/form-field';
 import CheckboxField from './ui/checkbox-field';
 import DatePicker from './ui/date-picker';
 import { CustomButton } from './ui/custom-button';
+import valid8Service from '../services/valid8Service';
 import './CreditSearchForm.css';
 
 /**
@@ -85,21 +86,13 @@ const CreditSearchForm = () => {
     setIsLoadingAddresses(true);
     
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Generate dummy addresses based on postal code
-      const mockAddresses = [
-        { value: `${postalCode}_1`, label: `${postalCode} - 123 Main Street` },
-        { value: `${postalCode}_2`, label: `${postalCode} - 456 Oak Avenue` },
-        { value: `${postalCode}_3`, label: `${postalCode} - 789 Pine Boulevard` },
-        { value: `${postalCode}_4`, label: `${postalCode} - 101 Cedar Lane` },
-      ];
-      
-      setAddressOptions([{ value: '', label: 'Select address' }, ...mockAddresses]);
+      // Call Valid8 API to get addresses
+      const addressList = await valid8Service.postcodeAddressLookup(postalCode);
+      const formattedOptions = valid8Service.formatAddressOptions(addressList);
+      setAddressOptions(formattedOptions);
     } catch (error) {
       console.error('Error fetching addresses:', error);
-      setAddressOptions([{ value: '', label: 'No addresses found' }]);
+      setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
     } finally {
       setIsLoadingAddresses(false);
     }
@@ -250,9 +243,17 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={() => {
-                          if (values.postalCode) {
-                            fetchAddressesByPostalCode(values.postalCode);
+                        onBlur={(e) => {
+                          // First let Formik handle the blur event
+                          const postalCode = e.target.value.trim();
+                          if (postalCode && postalCode.length >= 3) {
+                            // Only fetch addresses if postal code is valid format
+                            const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
+                            if (ukPostcodeRegex.test(postalCode)) {
+                              fetchAddressesByPostalCode(postalCode);
+                            } else {
+                              setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
+                            }
                           }
                         }}
                       />
@@ -270,7 +271,7 @@ const CreditSearchForm = () => {
                       required
                       errors={errors}
                       touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter postal code and tab out to see available addresses"}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter a valid UK postal code and tab out to see available addresses"}
                     />
                   </div>
 
