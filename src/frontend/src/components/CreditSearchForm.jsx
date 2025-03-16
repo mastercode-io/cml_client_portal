@@ -181,7 +181,7 @@ const CreditSearchForm = () => {
                     <FormField
                       label="Middle Name"
                       name="middleName"
-                      helpText="Optional"
+                      placeholder="Optional"
                       errors={errors}
                       touched={touched}
                     />
@@ -205,7 +205,6 @@ const CreditSearchForm = () => {
                       setFieldValue={setFieldValue}
                       minDate={new Date('1920-01-01')}
                       maxDate={new Date('2003-12-31')}
-                      helpText="Select your date of birth"
                     />
 
                     <FormField
@@ -258,6 +257,7 @@ const CreditSearchForm = () => {
                       errors={errors}
                       touched={touched}
                       labelFirst={false}
+                      className="checkbox-indent"
                     />
                   </div>
 

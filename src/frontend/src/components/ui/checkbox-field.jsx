@@ -27,7 +27,7 @@ const CheckboxField = ({
   const hasError = errors[name] && touched[name];
   
   return (
-    <div className={`form-field checkbox-field ${className}`}>
+    <div className={`checkbox-field ${className}`}>
       {labelFirst ? (
         <>
           <label htmlFor={name} className="checkbox-label">
