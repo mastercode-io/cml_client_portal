@@ -228,25 +228,30 @@ const CreditSearchForm = () => {
                   </div>
 
                   <div className="form-full-width">
-                    <FormField 
-                      label="Postal Code" 
-                      name="postalCode" 
-                      required 
-                      errors={errors} 
-                      touched={touched} 
-                    />
-
-                    <FormField
-                      label="Address Line"
-                      name="addressLine"
-                      as="select"
-                      placeholder="Select address"
-                      options={addressOptions}
-                      required
-                      errors={errors}
-                      touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
-                    />
+                    <div className="additional-fields">
+                      <div className="form-row">
+                        <FormField 
+                          label="Postal Code" 
+                          name="postalCode" 
+                          required 
+                          errors={errors} 
+                          touched={touched} 
+                        />
+                      </div>
+                      <div className="form-row">
+                        <FormField
+                          label="Address Line"
+                          name="addressLine"
+                          as="select"
+                          placeholder="Select address"
+                          options={addressOptions}
+                          required
+                          errors={errors}
+                          touched={touched}
+                          helpText={isLoadingAddresses ? "Loading addresses..." : "Enter your postal code to see available addresses"}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="form-full-width">

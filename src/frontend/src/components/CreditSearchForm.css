@@ -100,15 +100,15 @@
 
 .form-label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-weight: 500;
-  color: var(--text-dark);
   font-size: 0.875rem;
 }
 
 .form-label span.text-red-500 {
   display: inline;
   margin-left: 0.25rem;
+  color: #ef4444;
 }
 
 .form-input,
@@ -168,6 +168,7 @@
 .checkbox-label span.text-red-500 {
   display: inline;
   margin-right: 0.25rem;
+  color: #ef4444;
 }
 
 /* Checkbox indentation */
@@ -185,7 +186,7 @@
 .checkbox-indent .checkbox-label {
   display: block;
   padding-left: 1.5rem;
-  text-indent: 0;
+  text-indent: -1.5rem;
 }
 
 .checkbox-indent .checkbox-label span.text-red-500 {
@@ -194,6 +195,7 @@
   left: auto;
   top: auto;
   margin-right: 0.25rem;
+  color: #ef4444;
 }
 
 .checkbox-indent .error-message {
@@ -212,12 +214,13 @@
 
 .clear-button {
   margin-left: 1rem;
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
 }
 
 .clear-button:hover {
-  background-color: #d1d5db;
+  background-color: #e5e7eb !important;
 }
 
 .submit-button {
@@ -260,4 +263,9 @@
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Additional fields section */
+.additional-fields {
+  margin-top: 1rem;
 }
