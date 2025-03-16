@@ -168,7 +168,7 @@ const CreditSearchForm = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, errors, touched, values, setFieldValue, resetForm, handleChange, handleBlur }) => {
+          {({ isSubmitting, errors, touched, values, setFieldValue, resetForm }) => {
             // Effect to fetch addresses when postal code changes
             useEffect(() => {
               if (values.postalCode && values.postalCode.length >= 3) {
@@ -176,8 +176,44 @@ const CreditSearchForm = () => {
               } else {
                 setAddressOptions([{ value: '', label: 'Enter postal code first' }]);
               }
-            }, [values.postalCode, setFieldValue]);
+            }, [values.postalCode]);
             
+            // Format values on blur
+            const handleFieldBlur = (e, fieldName) => {
+              const { value } = e.target;
+              
+              // Apply formatting based on field name
+              switch (fieldName) {
+                case 'firstName':
+                case 'middleName':
+                case 'surname':
+                  setFieldValue(fieldName, capitalizeWords(value));
+                  break;
+                case 'email':
+                  setFieldValue(fieldName, value.trim().toLowerCase());
+                  break;
+                case 'mobile':
+                  setFieldValue(fieldName, formatMobileNumber(value));
+                  break;
+                case 'postalCode':
+                  const formattedPostalCode = value.trim().toUpperCase();
+                  setFieldValue(fieldName, formattedPostalCode);
+                  
+                  if (formattedPostalCode && formattedPostalCode.length >= 3) {
+                    // Only fetch addresses if postal code is valid format
+                    const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
+                    if (ukPostcodeRegex.test(formattedPostalCode)) {
+                      fetchAddressesByPostalCode(formattedPostalCode);
+                    } else {
+                      setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
+                    }
+                  }
+                  break;
+                default:
+                  break;
+              }
+            };
+
             return (
               <Form className="credit-search-form">
                 <div className="form-grid">
@@ -218,6 +254,7 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => handleFieldBlur(e, 'firstName')}
                       />
                     </div>
                     <div className="form-col mobile-field">
@@ -228,6 +265,7 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => handleFieldBlur(e, 'mobile')}
                       />
                     </div>
                   </div>
@@ -241,6 +279,7 @@ const CreditSearchForm = () => {
                         placeholder="Optional"
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => handleFieldBlur(e, 'middleName')}
                       />
                     </div>
                     <div className="form-col email-field">
@@ -251,6 +290,7 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => handleFieldBlur(e, 'email')}
                       />
                     </div>
                   </div>
@@ -264,6 +304,7 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => handleFieldBlur(e, 'surname')}
                       />
                     </div>
                     <div className="form-col postal-code-field">
@@ -273,21 +314,7 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => {
-                          // First let Formik handle the blur event
-                          const postalCode = e.target.value.trim().toUpperCase();
-                          setFieldValue('postalCode', postalCode);
-                          
-                          if (postalCode && postalCode.length >= 3) {
-                            // Only fetch addresses if postal code is valid format
-                            const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
-                            if (ukPostcodeRegex.test(postalCode)) {
-                              fetchAddressesByPostalCode(postalCode);
-                            } else {
-                              setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
-                            }
-                          }
-                        }}
+                        onBlur={(e) => handleFieldBlur(e, 'postalCode')}
                       />
                     </div>
                   </div>
