@@ -52,8 +52,6 @@ const FormField = ({
           id={name}
           name={name}
           className={`form-select ${hasError ? 'form-input-error' : ''}`}
-          onChange={onChange}
-          onBlur={onBlur}
         >
           <option value="" disabled>{placeholder || `Select ${label}`}</option>
           {options.map((option) => (
@@ -69,9 +67,6 @@ const FormField = ({
           name={name}
           placeholder={placeholder}
           className={`form-input ${hasError ? 'form-input-error' : ''}`}
-          rows="4"
-          onChange={onChange}
-          onBlur={onBlur}
         />
       ) : (
         <Field

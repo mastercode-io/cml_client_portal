@@ -218,11 +218,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => {
-                          const value = e.target.value.trim();
-                          setFieldValue('firstName', capitalizeWords(value));
-                          handleBlur(e); // Call Formik's handleBlur
-                        }}
                       />
                     </div>
                     <div className="form-col mobile-field">
@@ -233,17 +228,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onChange={(e) => {
-                          // Format the mobile number as the user types
-                          const formattedValue = formatMobileNumber(e.target.value);
-                          e.target.value = formattedValue; // Update the input field directly
-                          handleChange(e); // Call Formik's handleChange
-                        }}
-                        onBlur={(e) => {
-                          const value = e.target.value.trim();
-                          setFieldValue('mobile', value);
-                          handleBlur(e); // Call Formik's handleBlur
-                        }}
                       />
                     </div>
                   </div>
@@ -257,11 +241,6 @@ const CreditSearchForm = () => {
                         placeholder="Optional"
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => {
-                          const value = e.target.value.trim();
-                          setFieldValue('middleName', capitalizeWords(value));
-                          handleBlur(e); // Call Formik's handleBlur
-                        }}
                       />
                     </div>
                     <div className="form-col email-field">
@@ -272,11 +251,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => {
-                          const value = e.target.value.trim().toLowerCase();
-                          setFieldValue('email', value);
-                          handleBlur(e); // Call Formik's handleBlur
-                        }}
                       />
                     </div>
                   </div>
@@ -290,11 +264,6 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onBlur={(e) => {
-                          const value = e.target.value.trim();
-                          setFieldValue('surname', capitalizeWords(value));
-                          handleBlur(e); // Call Formik's handleBlur
-                        }}
                       />
                     </div>
                     <div className="form-col postal-code-field">
@@ -304,17 +273,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
-                        onChange={(e) => {
-                          // Convert to uppercase as user types
-                          const value = e.target.value.toUpperCase();
-                          e.target.value = value; // Update the input field directly
-                          handleChange(e); // Call Formik's handleChange
-                        }}
                         onBlur={(e) => {
                           // First let Formik handle the blur event
                           const postalCode = e.target.value.trim().toUpperCase();
                           setFieldValue('postalCode', postalCode);
-                          handleBlur(e); // Call Formik's handleBlur
                           
                           if (postalCode && postalCode.length >= 3) {
                             // Only fetch addresses if postal code is valid format
