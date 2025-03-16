@@ -106,8 +106,8 @@
   font-size: 0.875rem;
 }
 
-.form-label span {
-  color: #e53e3e; /* Red color for required asterisk */
+.form-label span.text-red-500 {
+  display: inline;
   margin-left: 0.25rem;
 }
 
@@ -142,8 +142,8 @@
 }
 
 .form-error {
+  display: block;
   margin-top: 0.25rem;
-  font-size: 0.75rem;
   color: var(--error);
 }
 
@@ -165,8 +165,8 @@
   line-height: 1.5;
 }
 
-.checkbox-label span {
-  color: #e53e3e; /* Red color for required asterisk */
+.checkbox-label span.text-red-500 {
+  display: inline;
   margin-right: 0.25rem;
 }
 
@@ -188,10 +188,19 @@
   text-indent: 0;
 }
 
-.checkbox-indent .checkbox-label span {
-  position: absolute;
-  left: 1.5rem;
-  top: 0;
+.checkbox-indent .checkbox-label span.text-red-500 {
+  position: relative;
+  display: inline;
+  left: auto;
+  top: auto;
+  margin-right: 0.25rem;
+}
+
+.checkbox-indent .error-message {
+  display: block;
+  margin-top: 0.5rem;
+  margin-left: 1.5rem;
+  color: #ef4444;
 }
 
 /* Form actions */
@@ -203,6 +212,12 @@
 
 .clear-button {
   margin-left: 1rem;
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.clear-button:hover {
+  background-color: #d1d5db;
 }
 
 .submit-button {

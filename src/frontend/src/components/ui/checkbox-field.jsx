@@ -1,5 +1,6 @@
 import React from 'react';
-import { Field, ErrorMessage } from 'formik';
+import { useField } from 'formik';
+import { ErrorMessage } from 'formik';
 
 /**
  * CheckboxField Component
@@ -8,54 +9,38 @@ import { Field, ErrorMessage } from 'formik';
  * 
  * @param {Object} props - Component props
  * @param {string} props.label - Label text for the checkbox
- * @param {string} props.name - Field name (used by Formik)
+ * @param {string} props.helpText - Help text for the checkbox
  * @param {boolean} props.required - Whether the field is required
  * @param {Object} props.errors - Formik errors object
  * @param {Object} props.touched - Formik touched object
  * @param {string} props.className - Additional CSS classes
- * @param {boolean} props.labelFirst - Whether to show label before checkbox (default: true)
  */
-const CheckboxField = ({
-  label,
-  name,
-  required = false,
-  errors,
-  touched,
-  className = '',
-  labelFirst = true
-}) => {
-  const hasError = errors[name] && touched[name];
-  
+const CheckboxField = ({ label, helpText, required, ...props }) => {
+  const [field, meta] = useField({ ...props, type: 'checkbox' });
+  const { name } = field;
+  const hasError = meta.touched && meta.error;
+
   return (
-    <div className={`checkbox-field ${className}`}>
-      {labelFirst ? (
-        <>
-          <label htmlFor={name} className="checkbox-label">
-            {required && <span className="text-red-500">*</span>}
-            {label}
-          </label>
-          <Field 
-            type="checkbox" 
-            id={name} 
-            name={name} 
-            className={`form-checkbox ${hasError ? 'form-checkbox-error' : ''}`}
-          />
-        </>
-      ) : (
-        <>
-          <Field 
-            type="checkbox" 
-            id={name} 
-            name={name} 
-            className={`form-checkbox ${hasError ? 'form-checkbox-error' : ''}`}
-          />
-          <label htmlFor={name} className="checkbox-label">
-            {required && <span className="text-red-500">*</span>}
-            {label}
-          </label>
-        </>
+    <div className="checkbox-indent">
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          {...field}
+          {...props}
+          id={name}
+          className={`checkbox-input ${hasError ? 'error' : ''}`}
+        />
+        <label htmlFor={name} className="checkbox-label">
+          {required && <span className="text-red-500">*</span>}
+          {label}
+        </label>
+      </div>
+      {helpText && <div className="help-text">{helpText}</div>}
+      {hasError && (
+        <div className="error-message">
+          <ErrorMessage name={name} />
+        </div>
       )}
-      <ErrorMessage name={name} component="div" className="form-error" />
     </div>
   );
 };
