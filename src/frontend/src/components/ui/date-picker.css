@@ -174,12 +174,27 @@
 
 /* Year Picker Styles */
 .year-picker {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
   max-height: 200px;
   overflow-y: auto;
   margin-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--border);
+}
+
+.year-picker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.year-picker::-webkit-scrollbar-track {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.year-picker::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 3px;
 }
 
 .year-item {
@@ -194,7 +209,7 @@
   padding: 0.5rem;
 }
 
-.year-item:hover:not(.disabled) {
+.year-item:hover {
   background-color: var(--primary-light);
 }
 

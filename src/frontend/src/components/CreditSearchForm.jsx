@@ -48,7 +48,7 @@ const CreditSearchForm = () => {
     lastName: Yup.string().required('Last name is required'),
     dateOfBirth: Yup.date()
       .required('Date of birth is required')
-      .max(new Date(), 'Date of birth cannot be in the future'),
+      .max(new Date('2003-12-31'), 'Date of birth cannot be after 2003-12-31'),
     mobile: Yup.string()
       .required('Mobile number is required')
       .matches(
@@ -194,7 +194,8 @@ const CreditSearchForm = () => {
                     errors={errors}
                     touched={touched}
                     setFieldValue={setFieldValue}
-                    maxDate={new Date()} // Limit to today's date
+                    minDate={new Date('1920-01-01')}
+                    maxDate={new Date('2003-12-31')}
                     helpText="Select your date of birth"
                   />
 

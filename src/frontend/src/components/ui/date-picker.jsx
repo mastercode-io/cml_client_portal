@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Field, ErrorMessage } from 'formik';
+import { ErrorMessage } from 'formik';
 import './date-picker.css';
 
 const DatePicker = ({
@@ -10,8 +10,8 @@ const DatePicker = ({
   errors,
   touched,
   helpText,
-  maxDate = new Date(),
-  minDate = new Date('1900-01-01'),
+  maxDate = new Date('2003-12-31'),
+  minDate = new Date('1920-01-01'),
   setFieldValue
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
@@ -21,6 +21,7 @@ const DatePicker = ({
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const calendarRef = useRef(null);
+  const yearPickerRef = useRef(null);
   const hasError = errors[name] && touched[name];
 
   // Close calendar when clicking outside
@@ -38,6 +39,16 @@ const DatePicker = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Scroll to current year when year picker opens
+  useEffect(() => {
+    if (showYearPicker && yearPickerRef.current) {
+      const yearElement = yearPickerRef.current.querySelector(`.year-item[data-year="${currentYear}"]`);
+      if (yearElement) {
+        yearPickerRef.current.scrollTop = yearElement.offsetTop - yearPickerRef.current.offsetHeight / 2 + yearElement.offsetHeight / 2;
+      }
+    }
+  }, [showYearPicker, currentYear]);
 
   // Update input value when form value changes
   useEffect(() => {
@@ -109,21 +120,18 @@ const DatePicker = ({
   // Generate years for the year picker
   const generateYears = () => {
     const years = [];
-    const currentYearNum = currentYear;
-    const startYear = currentYearNum - 10;
-    const endYear = currentYearNum + 10;
+    const minYear = minDate.getFullYear();
+    const maxYear = maxDate.getFullYear();
     
-    for (let year = startYear; year <= endYear; year++) {
-      const isCurrentYear = year === currentYearNum;
-      const isDisabled = 
-        (new Date(year, 11, 31) < minDate) || 
-        (new Date(year, 0, 1) > maxDate);
+    for (let year = minYear; year <= maxYear; year++) {
+      const isCurrentYear = year === currentYear;
       
       years.push(
         <div 
           key={year} 
-          className={`year-item ${isCurrentYear ? 'current' : ''} ${isDisabled ? 'disabled' : ''}`}
-          onClick={() => !isDisabled && handleYearSelect(year)}
+          data-year={year}
+          className={`year-item ${isCurrentYear ? 'current' : ''}`}
+          onClick={() => handleYearSelect(year)}
         >
           {year}
         </div>
@@ -145,6 +153,16 @@ const DatePicker = ({
   const navigateMonth = (direction) => {
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(newMonth.getMonth() + direction);
+    
+    // Check if we need to adjust the year
+    if (newMonth.getFullYear() < minDate.getFullYear()) {
+      newMonth.setFullYear(minDate.getFullYear());
+      newMonth.setMonth(0); // January
+    } else if (newMonth.getFullYear() > maxDate.getFullYear()) {
+      newMonth.setFullYear(maxDate.getFullYear());
+      newMonth.setMonth(11); // December
+    }
+    
     setCurrentMonth(newMonth);
     setCurrentYear(newMonth.getFullYear());
   };
@@ -277,7 +295,7 @@ const DatePicker = ({
             )}
             
             {showYearPicker && (
-              <div className="year-picker">
+              <div className="year-picker" ref={yearPickerRef} style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {generateYears()}
               </div>
             )}
