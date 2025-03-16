@@ -22,6 +22,7 @@ const DatePicker = ({
   const [inputValue, setInputValue] = useState('');
   const calendarRef = useRef(null);
   const yearPickerRef = useRef(null);
+  const monthPickerRef = useRef(null);
   const hasError = errors[name] && touched[name];
 
   // Close calendar when clicking outside
@@ -49,6 +50,16 @@ const DatePicker = ({
       }
     }
   }, [showYearPicker, currentYear]);
+
+  // Scroll to current month when month picker opens
+  useEffect(() => {
+    if (showMonthPicker && monthPickerRef.current) {
+      const monthElement = monthPickerRef.current.querySelector(`.month-item[data-month="${currentMonth.getMonth()}"]`);
+      if (monthElement) {
+        monthPickerRef.current.scrollTop = monthElement.offsetTop - monthPickerRef.current.offsetHeight / 2 + monthElement.offsetHeight / 2;
+      }
+    }
+  }, [showMonthPicker, currentMonth]);
 
   // Update input value when form value changes
   useEffect(() => {
@@ -97,8 +108,8 @@ const DatePicker = ({
   const generateMonths = () => {
     const months = [];
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
     ];
     
     for (let i = 0; i < 12; i++) {
@@ -106,6 +117,7 @@ const DatePicker = ({
       months.push(
         <div 
           key={i} 
+          data-month={i}
           className={`month-item ${isCurrentMonth ? 'current' : ''}`}
           onClick={() => handleMonthSelect(i)}
         >
@@ -123,7 +135,8 @@ const DatePicker = ({
     const minYear = minDate.getFullYear();
     const maxYear = maxDate.getFullYear();
     
-    for (let year = minYear; year <= maxYear; year++) {
+    // Generate years in descending order
+    for (let year = maxYear; year >= minYear; year--) {
       const isCurrentYear = year === currentYear;
       
       years.push(
@@ -289,7 +302,7 @@ const DatePicker = ({
             </div>
             
             {showMonthPicker && (
-              <div className="month-picker">
+              <div className="month-picker" ref={monthPickerRef}>
                 {generateMonths()}
               </div>
             )}

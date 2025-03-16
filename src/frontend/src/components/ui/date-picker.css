@@ -145,10 +145,27 @@
 
 /* Month Picker Styles */
 .month-picker {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
   margin-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--border);
+}
+
+.month-picker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.month-picker::-webkit-scrollbar-track {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.month-picker::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 3px;
 }
 
 .month-item {
