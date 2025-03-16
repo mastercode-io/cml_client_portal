@@ -3,6 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormField from './ui/form-field';
 import CheckboxField from './ui/checkbox-field';
+import DatePicker from './ui/date-picker';
 import { CustomButton } from './ui/custom-button';
 import './CreditSearchForm.css';
 
@@ -186,13 +187,15 @@ const CreditSearchForm = () => {
                     touched={touched} 
                   />
 
-                  <FormField
+                  <DatePicker
                     label="Date of Birth"
                     name="dateOfBirth"
-                    type="date"
                     required
                     errors={errors}
                     touched={touched}
+                    setFieldValue={setFieldValue}
+                    maxDate={new Date()} // Limit to today's date
+                    helpText="Select your date of birth"
                   />
 
                   <FormField
