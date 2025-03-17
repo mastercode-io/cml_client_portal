@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/cml_client_portal/static/css/main.adb4059b.css",
+    "main.js": "/cml_client_portal/static/js/main.2880c965.js",
+    "static/js/453.8ab44547.chunk.js": "/cml_client_portal/static/js/453.8ab44547.chunk.js",
+    "index.html": "/cml_client_portal/index.html",
+    "main.adb4059b.css.map": "/cml_client_portal/static/css/main.adb4059b.css.map",
+    "main.2880c965.js.map": "/cml_client_portal/static/js/main.2880c965.js.map",
+    "453.8ab44547.chunk.js.map": "/cml_client_portal/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.adb4059b.css",
+    "static/js/main.2880c965.js"
+  ]
+}
