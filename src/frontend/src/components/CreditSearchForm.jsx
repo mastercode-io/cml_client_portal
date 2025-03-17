@@ -25,8 +25,9 @@ const CreditSearchForm = () => {
     { value: 'Mr', label: 'Mr' },
     { value: 'Mrs', label: 'Mrs' },
     { value: 'Ms', label: 'Ms' },
+    { value: 'Miss', label: 'Miss' },
     { value: 'Dr', label: 'Dr' },
-    { value: 'Other', label: 'Other' },
+    { value: 'Rev', label: 'Rev' },
   ];
 
   // Initial form values
@@ -45,7 +46,7 @@ const CreditSearchForm = () => {
 
   // Validation schema using Yup
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
+    title: Yup.string(),
     firstName: Yup.string().required('First name is required'),
     surname: Yup.string().required('Surname is required'),
     dateOfBirth: Yup.date()
@@ -53,10 +54,12 @@ const CreditSearchForm = () => {
       .max(new Date('2003-12-31'), 'Date of birth cannot be after 2003-12-31'),
     mobile: Yup.string()
       .required('Mobile number is required')
-      .matches(
-        /^\+?[0-9]{10,15}$/,
-        'Please enter a valid mobile number'
-      ),
+      .test('valid-mobile', 'Please enter a valid mobile number', function(value) {
+        if (!value) return false;
+        const strippedNumber = stripPhoneFormatting(value);
+        // UK mobile numbers are typically 10-11 digits
+        return strippedNumber.length >= 10 && strippedNumber.length <= 11;
+      }),
     email: Yup.string()
       .email('Invalid email format')
       .required('Email is required'),
@@ -98,6 +101,40 @@ const CreditSearchForm = () => {
     }
   };
 
+  // Function to format mobile number
+  const formatMobileNumber = (value) => {
+    if (!value) return value;
+    
+    // Remove any non-digit characters
+    let phoneNumber = value.replace(/\D/g, '');
+    
+    // Format based on length
+    if (phoneNumber.length <= 4) {
+      return phoneNumber;
+    } else if (phoneNumber.length <= 7) {
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4)}`;
+    } else {
+      return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 11)}`.trim();
+    }
+  };
+
+  // Function to strip non-digit characters from phone number for validation
+  const stripPhoneFormatting = (phoneNumber) => {
+    if (!phoneNumber) return '';
+    // Remove the +44 prefix and any non-digit characters
+    return phoneNumber.replace(/^\+44\s*/, '').replace(/[^0-9]/g, '');
+  };
+
+  // Function to capitalize first letter of each word
+  const capitalizeWords = (value) => {
+    if (!value) return value;
+    return value
+      .trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   // Form submission handler
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     // Log form values to console (to be replaced with API call later)
@@ -127,10 +164,8 @@ const CreditSearchForm = () => {
     <div className="credit-search-container">
       <div className="credit-search-card">
         <div className="card-header">
-          <h2 className="card-title">Credit Search</h2>
-          <p className="card-description">
-            Please fill out the form below to check if you're eligible to make a claim.
-          </p>
+          <h2 className="card-title">Credit Search Form</h2>
+          <p className="card-description">Please fill in the form below to proceed with your credit search.</p>
         </div>
 
         <Formik
@@ -160,7 +195,6 @@ const CreditSearchForm = () => {
                         as="select"
                         placeholder="Select title"
                         options={titleOptions}
-                        required
                         errors={errors}
                         touched={touched}
                       />
@@ -188,6 +222,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setFieldValue('firstName', capitalized);
+                        }}
                       />
                     </div>
                     <div className="form-col mobile-field">
@@ -195,9 +233,14 @@ const CreditSearchForm = () => {
                         label="Mobile"
                         name="mobile"
                         type="tel"
+                        placeholder=""
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const formattedValue = formatMobileNumber(e.target.value);
+                          setFieldValue('mobile', formattedValue);
+                        }}
                       />
                     </div>
                   </div>
@@ -211,6 +254,10 @@ const CreditSearchForm = () => {
                         placeholder="Optional"
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setFieldValue('middleName', capitalized);
+                        }}
                       />
                     </div>
                     <div className="form-col email-field">
@@ -234,6 +281,10 @@ const CreditSearchForm = () => {
                         required
                         errors={errors}
                         touched={touched}
+                        onBlur={(e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setFieldValue('surname', capitalized);
+                        }}
                       />
                     </div>
                     <div className="form-col postal-code-field">
@@ -244,16 +295,13 @@ const CreditSearchForm = () => {
                         errors={errors}
                         touched={touched}
                         onBlur={(e) => {
-                          // First let Formik handle the blur event
-                          const postalCode = e.target.value.trim();
+                          // Convert to uppercase and trim
+                          const postalCode = e.target.value.trim().toUpperCase();
+                          setFieldValue('postalCode', postalCode);
+                          
+                          // Only fetch addresses if postal code has enough characters
                           if (postalCode && postalCode.length >= 3) {
-                            // Only fetch addresses if postal code is valid format
-                            const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
-                            if (ukPostcodeRegex.test(postalCode)) {
-                              fetchAddressesByPostalCode(postalCode);
-                            } else {
-                              setAddressOptions([{ value: '', label: 'Not valid postcode format' }]);
-                            }
+                            fetchAddressesByPostalCode(postalCode);
                           }
                         }}
                       />
@@ -271,7 +319,7 @@ const CreditSearchForm = () => {
                       required
                       errors={errors}
                       touched={touched}
-                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter a valid UK postal code and tab out to see available addresses"}
+                      helpText={isLoadingAddresses ? "Loading addresses..." : "Enter a valid UK postal code to see available addresses"}
                     />
                   </div>
 

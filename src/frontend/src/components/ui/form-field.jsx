@@ -67,6 +67,18 @@ const FormField = ({
           className={`form-input ${hasError ? 'form-input-error' : ''}`}
           {...rest}
         />
+      ) : type === 'tel' ? (
+        <div className="tel-input-container">
+          <span className="tel-prefix">+44 </span>
+          <Field
+            type="text"
+            id={name}
+            name={name}
+            placeholder={placeholder}
+            className={`form-input tel-input ${hasError ? 'form-input-error' : ''}`}
+            {...rest}
+          />
+        </div>
       ) : (
         <Field
           type={type}

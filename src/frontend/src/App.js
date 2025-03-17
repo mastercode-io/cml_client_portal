@@ -5,11 +5,6 @@ import CreditSearchForm from './components/CreditSearchForm';
 function App() {
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="container">
-          <h1>CML Client Portal</h1>
-        </div>
-      </header>
       <main className="app-main">
         <CreditSearchForm />
       </main>

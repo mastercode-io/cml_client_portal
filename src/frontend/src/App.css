@@ -12,6 +12,12 @@ body {
   line-height: 1.6;
   color: var(--text-dark);
   background-color: var(--background);
+  height: 100%;
+  overflow-y: auto;
+}
+
+html {
+  height: 100%;
 }
 
 .container {
@@ -50,26 +56,33 @@ body {
 }
 
 /* Main Content */
-main {
+.app-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem 3rem;
+  padding: 2rem 1rem 6rem; /* Increased bottom padding to make room for sticky footer */
+  overflow-y: auto;
 }
 
 /* Footer Styles */
 .app-footer {
   background-color: #1f2937; /* Dark gray */
   color: #f9fafb;
-  padding: 1.5rem 0;
-  margin-top: auto;
+  padding: 1rem 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   font-size: 0.875rem;
+  z-index: 100;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 640px) {
+  .app-main {
+    padding-bottom: 4rem;
+  }
   .App-header h1 {
     font-size: 1.25rem;
   }
